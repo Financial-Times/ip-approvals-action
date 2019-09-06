@@ -1,3 +1,5 @@
+const {putItem} = require('./dynamo');
+
 exports.handler = async (event) => {
   const decodedMessage = decodeURIComponent(event.body);
   const messageObjectString = decodedMessage.split('payload=')[1]
@@ -6,6 +8,8 @@ exports.handler = async (event) => {
   
   if(messageValue === 'Approve') {
       console.log('This has been approved!!')
+      putItem();
+      
   } else {
       console.log('Denied!!!')
   }
