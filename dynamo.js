@@ -14,7 +14,7 @@ module.exports = {
             'cost': request.cost,
             'calendarYear': request.calendarYear,
             'travelCost': request.travelCost,
-            'additionalInfo': request.additionlInfo,
+            'additionalInfo': request.additionalInfo,
             'status': request.status, 
             'requestDate': request.requestDate,   
             'actionedDate': moment().format("DD/MM/YYYY HH:mm:ss")   

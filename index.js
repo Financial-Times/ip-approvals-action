@@ -1,6 +1,6 @@
 const {putItem} = require('./dynamo');
 
-exports.handler = async (event) => {
+exports.handler = function(event,context,callback) {
   if(event) {
     const decodedMessage = decodeURIComponent(event.body);
     const messageObjectString = decodedMessage.split('payload=')[1]
