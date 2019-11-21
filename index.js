@@ -74,9 +74,9 @@ const sendResponse = async (responseUrl, answer, uuid) => {
 	let text
 
 	if (answer === 'approve') {
-		text = `You've approved request id ${uuid} ✅`
+		text = `You've approved request ${uuid} ✅`
 	} else if (answer === 'deny') {
-		text = `You've denied request id ${uuid} ❌`
+		text = `You've denied request ${uuid} ❌`
 	}
 
 	const response = await axios.post(
@@ -118,7 +118,7 @@ exports.handler = async function (event, context, callback) {
 
 			const approverResponse = actions[0].value
 
-			const uuid = message.text.split('request')[1].split('from')[0].replace(/[+]/g, '')
+			const uuid = message.text.split('id:')[1].split('from')[0].replace(/[+]/g, '')
 
 			const slackResponse = await sendResponse(response_url, approverResponse, uuid)
 
