@@ -31,7 +31,7 @@ async function getRowFromUuid(uuid, response) {
 	const sheets = google.sheets({ version: 'v4', auth: oAuth2Client });
 
 	const ressy = await sheets.spreadsheets.values.get({
-		spreadsheetId: '109ptCW0m3OgZaDTe0Y26cYBPbuzmN8pv4CZw8Umpe-I',
+		spreadsheetId: process.env.SPREADSHEET_ID,
 		range: 'Form responses 1!A2:J',
 	})
 
@@ -46,7 +46,7 @@ async function getRowFromUuid(uuid, response) {
 			return row[9] === uuid
 		})
 		const cell = rowWeNeed + 2
-		const spreadsheetId = '109ptCW0m3OgZaDTe0Y26cYBPbuzmN8pv4CZw8Umpe-I'
+		const spreadsheetId = process.env.SPREADSHEET_ID
 		const range = `Form responses 1!I${cell}`
 		let values = [[response]]
 		let resource = {
@@ -69,14 +69,15 @@ async function getRowFromUuid(uuid, response) {
 	}
 }
 
-const sendResponse = async (responseUrl, answer, uuid) => {
+const sendResponse = async (responseUrl, answer, uuid, requesterName, messageId) => {
 
 	let text
 
+
 	if (answer === 'approve') {
-		text = `You've approved request ${uuid} ✅`
+		text = `You've approved request ${uuid}. Please let${requesterName}know. ✅`
 	} else if (answer === 'deny') {
-		text = `You've denied request ${uuid} ❌`
+		text = `You've denied request ${uuid}. Please let${requesterName}know. ❌`
 	}
 
 	const response = await axios.post(
@@ -92,6 +93,7 @@ const sendResponse = async (responseUrl, answer, uuid) => {
 	)
 	return response
 }
+
 
 const authenticate = (httpMethod, token) => {
 	if (httpMethod !== 'POST') {
@@ -111,6 +113,7 @@ exports.handler = async function (event, context, callback) {
 			const decodedMessage = decodeURIComponent(event.body);
 			const messageObjectString = decodedMessage.split('payload=')[1]
 			const messageObject = JSON.parse(messageObjectString)
+			
 
 			const { token, response_url, actions, message } = messageObject
 
@@ -119,8 +122,9 @@ exports.handler = async function (event, context, callback) {
 			const approverResponse = actions[0].value
 
 			const uuid = message.text.split('id:')[1].split('from')[0].replace(/[+]/g, '')
-
-			const slackResponse = await sendResponse(response_url, approverResponse, uuid)
+			const requesterName = message.text.split('from')[1].split('•')[0].replace(/[+]/g, ' ')
+			
+			const slackResponse = await sendResponse(response_url, approverResponse, uuid, requesterName)
 
 			// update spreadsheet
 
