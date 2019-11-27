@@ -3,7 +3,6 @@ const axios = require('axios')
 const { google } = require('googleapis');
 const fetch = require('node-fetch');
 
-  
   //the  people api call defined here and run below gets the approver name from the requester's details.
   //it calls in the secondPeopleAPI function defined above which gets the get the approvers slack id.
   //at the end we have the four things we need: approverId, approverName, requesterId and requesterName
@@ -38,9 +37,6 @@ const fetch = require('node-fetch');
 		})
 	})
   }
-  
-
-
 
 const authorize = (credentials) => {
 	const { client_secret, client_id, redirect_uris } = credentials.installed;
@@ -113,11 +109,10 @@ const sendResponse = async (responseUrl, answer, uuid, requesterName) => {
 
 	let text
 
-
 	if (answer === 'approve') {
-		text = `You've approved request ${uuid}. Please let${requesterName}know. ✅`
+		text = `You've approved request ${uuid}. ✅`
 	} else if (answer === 'deny') {
-		text = `You've denied request ${uuid}. Please let${requesterName}know. ❌`
+		text = `You've denied request ${uuid}. ❌`
 	}
 
 	const response = await axios.post(
@@ -178,9 +173,17 @@ exports.handler = async function (event, context, callback) {
 	
 			  console.log(result)
 	
+			let text
+
+			  if (result.answer === 'approve') {
+				text = `Your request ${result.uuid} has been approved. Please book travel through egencia. ✅`
+			} else if (result.answer === 'deny') {
+				text = `Your request ${result.uuid} has been denied. ❌`
+			}
+			 
 			  const messageForRequester = {
 				//text that appears in slack notification.
-				text: `Your request ${result.uuid} has been ${result.answer}.`,
+				text,
 				channel: `${result.requesterId}`,
 				//text that appears in slack message.
 				blocks: [
@@ -188,7 +191,7 @@ exports.handler = async function (event, context, callback) {
 					type: 'section',
 					text: {
 					  type: 'mrkdwn',
-					  text: `Your request ${result.uuid} has been ${result.answer}.`,
+					  text,
 					},
 				  }
 				]
