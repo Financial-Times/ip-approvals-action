@@ -1,6 +1,46 @@
 require('dotenv').config()
 const axios = require('axios')
 const { google } = require('googleapis');
+const fetch = require('node-fetch');
+
+  
+  //the  people api call defined here and run below gets the approver name from the requester's details.
+  //it calls in the secondPeopleAPI function defined above which gets the get the approvers slack id.
+  //at the end we have the four things we need: approverId, approverName, requesterId and requesterName
+  const peopleApiCall = (person, answer, uuid) => {
+	const peopleAPIurl = `https://ip-people.herokuapp.com/api/people/${person}`
+  
+	const options = {
+	  method: 'GET',
+	  headers: {
+		'apikey': process.env.PEOPLE_API_KEY
+	  }
+	};
+  
+	return new Promise((resolve, reject) => {
+	  fetch(peopleAPIurl, options)
+		.then(response => {
+		  console.log('peopleAPI response 1: ', response.statusText)
+		  return response.json();
+		})
+		.then(json => {
+		  console.log('requester id is: ', json[0].slack.id)
+			  resolve({
+				requesterId: json[0].slack.id,
+				// set object key answer to variable answer - shorthand
+				answer,
+				uuid
+			  })
+			})
+		.catch(err => {
+		  console.log(err)
+		  return reject(err)
+		})
+	})
+  }
+  
+
+
 
 const authorize = (credentials) => {
 	const { client_secret, client_id, redirect_uris } = credentials.installed;
@@ -69,7 +109,7 @@ async function getRowFromUuid(uuid, response) {
 	}
 }
 
-const sendResponse = async (responseUrl, answer, uuid, requesterName, messageId) => {
+const sendResponse = async (responseUrl, answer, uuid, requesterName) => {
 
 	let text
 
@@ -125,6 +165,56 @@ exports.handler = async function (event, context, callback) {
 			const requesterName = message.text.split('from')[1].split('•')[0].replace(/[+]/g, ' ')
 			
 			const slackResponse = await sendResponse(response_url, approverResponse, uuid, requesterName)
+
+			console.log('the message object is:', messageObject)
+			console.log('the responseUrl is:', response_url)
+
+			//make the peopleApi call, get the variables we need, then send the slack messages.
+
+			const person = requesterName.replace(' ', '.')
+
+			const peopleResponse = await peopleApiCall(person, approverResponse, uuid)
+			.then(result => {
+	
+			  console.log(result)
+	
+			  const messageForRequester = {
+				//text that appears in slack notification.
+				text: `Your request ${result.uuid} has been ${result.answer}.`,
+				channel: `${result.requesterId}`,
+				//text that appears in slack message.
+				blocks: [
+				  {
+					type: 'section',
+					text: {
+					  type: 'mrkdwn',
+					  text: `Your request ${result.uuid} has been ${result.answer}.`,
+					},
+				  }
+				]
+			  }
+
+			//provide token and connect to slack to send messages
+			const slackUrl = "https://slack.com/api/chat.postMessage"
+
+			fetch(slackUrl, {
+			  method: 'POST',
+			  headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${process.env.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN}`
+			  },
+			  body: JSON.stringify(messageForRequester)
+			})
+			.then(response => response.json())
+			.then(data =>  {
+				console.log('response for requester: ', data);
+				return resolve(data)
+			  })
+			  .catch(err => {
+				console.log(err)
+				return reject(err)
+			  })
+			})
 
 			// update spreadsheet
 
