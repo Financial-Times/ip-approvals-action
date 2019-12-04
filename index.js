@@ -166,8 +166,7 @@ exports.handler = async function (event, context, callback) {
 			let text
 
 			if (peopleResponse.answer === 'approve') {
-				text = `Your request ${peopleResponse.uuid} has been approved. ✅ \nPlease book your travel using <https://www.egencia.co.uk/|Egencia> and review
-				travel advice, contact details and policies on < https://sites.google.com/a/ft.com/insideft/home/ft-travel|Inside FT>.`
+				text = `Your request ${peopleResponse.uuid} has been approved. ✅ \nPlease book your travel using <https://www.egencia.co.uk/|Egencia> and review travel advice, contact details and policies on <https://sites.google.com/a/ft.com/insideft/home/ft-travel|Inside FT>.`
 			} else if (peopleResponse.answer === 'deny') {
 				text = `Your request ${peopleResponse.uuid} has been denied. ❌`
 			}
