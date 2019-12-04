@@ -221,7 +221,7 @@ exports.handler = async function (event, context, callback) {
 					//provide token and connect to slack to send messages
 					const slackUrl = "https://slack.com/api/chat.postMessage"
 
-					fetch(slackUrl, {
+					return fetch(slackUrl, {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json',
