@@ -3,40 +3,40 @@ const axios = require('axios')
 const { google } = require('googleapis');
 const fetch = require('node-fetch');
 
-  //the  people api call defined here and run below gets the approver name from the requester's details.
-  //it calls in the secondPeopleAPI function defined above which gets the get the approvers slack id.
-  //at the end we have the four things we need: approverId, approverName, requesterId and requesterName
-  const peopleApiCall = (person, answer, uuid) => {
+//the  people api call defined here and run below gets the approver name from the requester's details.
+//it calls in the secondPeopleAPI function defined above which gets the get the approvers slack id.
+//at the end we have the four things we need: approverId, approverName, requesterId and requesterName
+const peopleApiCall = (person, answer, uuid) => {
 	const peopleAPIurl = `https://ip-people.herokuapp.com/api/people/${person}`
-  
+
 	const options = {
-	  method: 'GET',
-	  headers: {
-		'apikey': process.env.PEOPLE_API_KEY
-	  }
+		method: 'GET',
+		headers: {
+			'apikey': process.env.PEOPLE_API_KEY
+		}
 	};
-  
+
 	return new Promise((resolve, reject) => {
-	  fetch(peopleAPIurl, options)
-		.then(response => {
-		  console.log('peopleAPI response 1: ', response.statusText)
-		  return response.json();
-		})
-		.then(json => {
-		  console.log('requester id is: ', json[0].slack.id)
-			  resolve({
-				requesterId: json[0].slack.id,
-				// set object key answer to variable answer - shorthand
-				answer,
-				uuid
-			  })
+		fetch(peopleAPIurl, options)
+			.then(response => {
+				console.log('peopleAPI response 1: ', response.statusText)
+				return response.json();
 			})
-		.catch(err => {
-		  console.log(err)
-		  return reject(err)
-		})
+			.then(json => {
+				console.log('requester id is: ', json[0].slack.id)
+				resolve({
+					requesterId: json[0].slack.id,
+					// set object key answer to variable answer - shorthand
+					answer,
+					uuid
+				})
+			})
+			.catch(err => {
+				console.log(err)
+				return reject(err)
+			})
 	})
-  }
+}
 
 const authorize = (credentials) => {
 	const { client_secret, client_id, redirect_uris } = credentials.installed;
@@ -96,11 +96,16 @@ async function getRowFromUuid(uuid, response) {
 			resource
 		})
 
-		if (ressy2.status === 200) {
-			if (!ressy2.data || !ressy2.data.values) {
-				throw new Error('No data put in spreadsheet')
-			};
-		}
+		// if (ressy2.status === 200) {
+		console.log(ressy2.status)
+		// console.log(ressy2.json())
+		// console.log(ressy2)
+		// console.log(ressy2.data)
+		// console.log(ressy2.data.values)
+		// if (!ressy2.data || !ressy2.data.values) {
+		// 	throw new Error('No data put in spreadsheet')
+		// };
+		// }
 
 	}
 }
@@ -145,10 +150,14 @@ exports.handler = async function (event, context, callback) {
 	try {
 		if (event) {
 
+			console.log('hi')
+
+			//console.log(event)
+
 			const decodedMessage = decodeURIComponent(event.body);
 			const messageObjectString = decodedMessage.split('payload=')[1]
 			const messageObject = JSON.parse(messageObjectString)
-			
+
 
 			const { token, response_url, actions, message } = messageObject
 
@@ -158,70 +167,81 @@ exports.handler = async function (event, context, callback) {
 
 			const uuid = message.text.split('id:')[1].split('from')[0].replace(/[+]/g, '')
 			const requesterName = message.text.split('from')[1].split('•')[0].replace(/[+]/g, ' ')
-			
+
+			console.log('before slackresponse')
+
 			const slackResponse = await sendResponse(response_url, approverResponse, uuid, requesterName)
 
 			console.log('the message object is:', messageObject)
 			console.log('the responseUrl is:', response_url)
 
+			// update spreadsheet
+
+			const googleApiResponse = await getRowFromUuid(uuid, approverResponse)
+
 			//make the peopleApi call, get the variables we need, then send the slack messages.
 
 			const person = requesterName.replace(' ', '.')
 
+			console.log(person)
+
 			const peopleResponse = await peopleApiCall(person, approverResponse, uuid)
-			.then(result => {
-	
-			  console.log(result)
-	
-			let text
+				.then(result => {
 
-			  if (result.answer === 'approve') {
-				text = `Your request ${result.uuid} has been approved. Please book travel through egencia. ✅`
-			} else if (result.answer === 'deny') {
-				text = `Your request ${result.uuid} has been denied. ❌`
-			}
-			 
-			  const messageForRequester = {
-				//text that appears in slack notification.
-				text,
-				channel: `${result.requesterId}`,
-				//text that appears in slack message.
-				blocks: [
-				  {
-					type: 'section',
-					text: {
-					  type: 'mrkdwn',
-					  text,
-					},
-				  }
-				]
-			  }
+					console.log(result)
 
-			//provide token and connect to slack to send messages
-			const slackUrl = "https://slack.com/api/chat.postMessage"
+					let text
 
-			fetch(slackUrl, {
-			  method: 'POST',
-			  headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${process.env.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN}`
-			  },
-			  body: JSON.stringify(messageForRequester)
-			})
-			.then(response => response.json())
-			.then(data =>  {
-				console.log('response for requester: ', data);
-				return resolve(data)
-			  })
-			  .catch(err => {
-				console.log(err)
-				return reject(err)
-			  })
-			})
+					if (result.answer === 'approve') {
+						text = `Your request ${result.uuid} has been approved. Please book travel through egencia. ✅`
+					} else if (result.answer === 'deny') {
+						text = `Your request ${result.uuid} has been denied. ❌`
+					}
 
-			// update spreadsheet
+					console.log(text)
 
-			const googleApiResponse = await getRowFromUuid(uuid, approverResponse)
+					const message = {
+						//text that appears in slack notification.
+						text: text,
+						channel: `${result.requesterId}`,
+						//text that appears in slack message.
+						blocks: [
+							{
+								type: 'section',
+								text: {
+									type: 'mrkdwn',
+									text: text,
+								},
+							}
+						]
+					}
+
+					console.log('msg for requester', message)
+
+					//provide token and connect to slack to send messages
+					const slackUrl = "https://slack.com/api/chat.postMessage"
+
+					fetch(slackUrl, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							Authorization: `Bearer ${process.env.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN}`
+						},
+						body: JSON.stringify(message)
+					}).then(response => {
+							console.log('yes response')
+							return response.json()
+						}).then((data) => {
+							console.log(data)
+						}).catch(err => {
+							console.log(err)
+							return err
+						})
+				})
+				.catch(err => {
+					console.log(err)
+					return err
+				})
 
 			return {
 				statusCode: 200,
