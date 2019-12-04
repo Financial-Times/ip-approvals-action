@@ -1,0 +1,68 @@
+const index = require('./index')
+
+const event = { resource: '/',
+path: '/',
+httpMethod: 'POST',
+headers:
+ { Accept: 'application/json,*/*',
+   'Accept-Encoding': 'gzip,deflate',
+   'Content-Type': 'application/x-www-form-urlencoded',
+   Host: 'lursqeu722.execute-api.eu-west-1.amazonaws.com',
+   'User-Agent': 'Slackbot 1.0 (+https://api.slack.com/robots)',
+   'X-Amzn-Trace-Id': 'Root=1-5de7a103-207ffbea223615e077bcdf77',
+   'X-Forwarded-For': '54.152.71.47',
+   'X-Forwarded-Port': '443',
+   'X-Forwarded-Proto': 'https',
+   'X-Slack-Request-Timestamp': '1575461123',
+   'X-Slack-Signature':
+	'v0=dbf766e9ac38eab9e45c5ac1feb65af207ea1c8eb877b8c8f0ad02b93ff5a1b1' },
+multiValueHeaders:
+ { Accept: [ 'application/json,*/*' ],
+   'Accept-Encoding': [ 'gzip,deflate' ],
+   'Content-Type': [ 'application/x-www-form-urlencoded' ],
+   Host: [ 'lursqeu722.execute-api.eu-west-1.amazonaws.com' ],
+   'User-Agent': [ 'Slackbot 1.0 (+https://api.slack.com/robots)' ],
+   'X-Amzn-Trace-Id': [ 'Root=1-5de7a103-207ffbea223615e077bcdf77' ],
+   'X-Forwarded-For': [ '54.152.71.47' ],
+   'X-Forwarded-Port': [ '443' ],
+   'X-Forwarded-Proto': [ 'https' ],
+   'X-Slack-Request-Timestamp': [ '1575461123' ],
+   'X-Slack-Signature':
+	[ 'v0=dbf766e9ac38eab9e45c5ac1feb65af207ea1c8eb877b8c8f0ad02b93ff5a1b1' ] },
+queryStringParameters: null,
+multiValueQueryStringParameters: null,
+pathParameters: null,
+stageVariables: null,
+requestContext:
+ { resourceId: 'hpr5110kqb',
+   resourcePath: '/',
+   httpMethod: 'POST',
+   extendedRequestId: 'ELYYoFOHjoEF6Jg=',
+   requestTime: '04/Dec/2019:12:05:23 +0000',
+   path: '/prod/',
+   accountId: '333239165417',
+   protocol: 'HTTP/1.1',
+   stage: 'prod',
+   domainPrefix: 'lursqeu722',
+   requestTimeEpoch: 1575461123996,
+   requestId: '9a5e99a2-26bf-4900-a0f7-f2b0c35e8db0',
+   identity:
+	{ cognitoIdentityPoolId: null,
+	  accountId: null,
+	  cognitoIdentityId: null,
+	  caller: null,
+	  sourceIp: '54.152.71.47',
+	  principalOrgId: null,
+	  accessKey: null,
+	  cognitoAuthenticationType: null,
+	  cognitoAuthenticationProvider: null,
+	  userArn: null,
+	  userAgent: 'Slackbot 1.0 (+https://api.slack.com/robots)',
+	  user: null },
+   domainName: 'lursqeu722.execute-api.eu-west-1.amazonaws.com',
+   apiId: 'lursqeu722' },
+body:
+ 'payload=%7B%22type%22%3A%22block_actions%22%2C%22team%22%3A%7B%22id%22%3A%22T025C95MN%22%2C%22domain%22%3A%22financialtimes%22%7D%2C%22user%22%3A%7B%22id%22%3A%22U03E98JJN%22%2C%22username%22%3A%22jill.ward%22%2C%22name%22%3A%22jill.ward%22%2C%22team_id%22%3A%22T025C95MN%22%7D%2C%22api_app_id%22%3A%22AMLQEPU56%22%2C%22token%22%3A%22giWzx9XGYgxxH9Lk2V6Er7Dd%22%2C%22container%22%3A%7B%22type%22%3A%22message%22%2C%22message_ts%22%3A%221575460985.028400%22%2C%22channel_id%22%3A%22D03E98JK0%22%2C%22is_ephemeral%22%3Afalse%7D%2C%22trigger_id%22%3A%22846590527026.2182311736.0e8404ac54543aaf68484c14852c2e61%22%2C%22channel%22%3A%7B%22id%22%3A%22D03E98JK0%22%2C%22name%22%3A%22directmessage%22%7D%2C%22message%22%3A%7B%22type%22%3A%22message%22%2C%22subtype%22%3A%22bot_message%22%2C%22text%22%3A%22Hi+Matt+Chadburn%2C+you+have+a+new+Conference+request+from+Kate+Beard+%5Cu2022+Cost%3A+%5Cu00a32342+%5Cu2022+Cost%3A+%5Cu00a32342+%5Cu2022+Travel%5C%2Faccomodation+cost%3A+%5Cu00a323423333+%5Cu2022+Calendar+year%3A+2019++%5Cu2022+Url%3A+%3Chttp%3A%5C%2F%5C%2Fwww.example.com%3E%5Cu2022+Additional+info%3A+nope+%5Cu2022+Request+id%3A+0f3349ee-e787-492f-b5ab-08677328f006%22%2C%22ts%22%3A%221575460985.028400%22%2C%22username%22%3A%22ip-approvals%22%2C%22bot_id%22%3A%22BQ7FW6ZSR%22%2C%22blocks%22%3A%5B%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%22u%5C%2F%3D%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22Hi+Matt+Chadburn%2C+you+have+a+new+Conference+request+from+Kate+Beard.%5Cn%5Cu2022+Cost%3A+%5Cu00a32342%5Cn%5Cu2022+Travel%5C%2Faccomodation+cost%3A+%5Cu00a323423333%5Cn%5Cu2022+Calendar+year%3A+2019%5Cn%5Cu2022+Url%3A+%3Chttp%3A%5C%2F%5C%2Fwww.example.com%3E%5Cn%5Cu2022+Additional+info%3A+nope%5Cn%5Cu2022+Request+id%3A+0f3349ee-e787-492f-b5ab-08677328f006%22%2C%22verbatim%22%3Afalse%7D%7D%2C%7B%22type%22%3A%22actions%22%2C%22block_id%22%3A%22approvalblock%22%2C%22elements%22%3A%5B%7B%22type%22%3A%22button%22%2C%22action_id%22%3A%22sVlW%22%2C%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Approve%22%2C%22emoji%22%3Atrue%7D%2C%22style%22%3A%22primary%22%2C%22value%22%3A%22approve%22%7D%2C%7B%22type%22%3A%22button%22%2C%22action_id%22%3A%22UFHd2%22%2C%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Deny%22%2C%22emoji%22%3Atrue%7D%2C%22style%22%3A%22danger%22%2C%22value%22%3A%22deny%22%7D%5D%7D%5D%7D%2C%22response_url%22%3A%22https%3A%5C%2F%5C%2Fhooks.slack.com%5C%2Factions%5C%2FT025C95MN%5C%2F859371854288%5C%2F7PL8PbSHWWkNDp4S1bACbzG4%22%2C%22actions%22%3A%5B%7B%22action_id%22%3A%22sVlW%22%2C%22block_id%22%3A%22approvalblock%22%2C%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Approve%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22approve%22%2C%22style%22%3A%22primary%22%2C%22type%22%3A%22button%22%2C%22action_ts%22%3A%221575461123.736265%22%7D%5D%7D',
+isBase64Encoded: false }
+
+index.handler(event)
